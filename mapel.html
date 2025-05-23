@@ -2,22 +2,93 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Formulir Mapel</title>
+  <title>Mapel - Pilih Ujian</title>
   <style>
     body {
-      margin: 0;
-      padding: 0;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+    }
+    select, button {
+      padding: 10px;
+      margin: 10px;
+      font-size: 16px;
     }
     iframe {
+      width: 100%;
+      height: 90vh;
       border: none;
-      width: 100vw;
-      height: 100vh;
+      margin-top: 20px;
+      display: none;
     }
   </style>
 </head>
 <body>
-  <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSf9_izRTXCO9_KU7JGKxrqtwoiccaMsuMp1mZh4YEXwRUZ9fg/viewform?embedded=true" loading="lazy">
-    Memuat…
-  </iframe>
+  <h2>Pilih Mata Pelajaran dan Kelas</h2>
+
+  <label for="mapel">Mata Pelajaran:</label>
+  <select id="mapel">
+    <option value="">--Pilih Mata Pelajaran--</option>
+    <option value="PAK">PAK</option>
+    <option value="PKN">PKN</option>
+    <option value="BahasaIndonesia">Bahasa Indonesia</option>
+    <option value="BahasaInggris">Bahasa Inggris</option>
+    <option value="Matematika">Matematika</option>
+    <option value="IPA">IPA</option>
+    <option value="IPS">IPS</option>
+    <option value="Prakarya">Prakarya</option>
+    <option value="PJOK">PJOK</option>
+    <option value="Informatika">Informatika</option>
+    <option value="Mulok">Mulok</option>
+  </select>
+
+  <label for="kelas">Kelas:</label>
+  <select id="kelas">
+    <option value="">--Pilih Kelas--</option>
+    <option value="7">Kelas 7</option>
+    <option value="8">Kelas 8</option>
+    <option value="9">Kelas 9</option>
+  </select>
+
+  <br>
+  <button onclick="mulaiUjian()">Mulai Ujian</button>
+
+  <iframe id="formFrame"></iframe>
+
+  <script>
+    const formLinks = {
+      // Format: 'Mapel_Kelas': 'link google form embed'
+      'PAK_7': 'https://docs.google.com/forms/d/e/1FAIpQLSf9_izRTXCO9_KU7JGKxrqtwoiccaMsuMp1mZh4YEXwRUZ9fg/viewform?embedded=true',
+      'PAK_8': 'https://docs.google.com/forms/d/e/1FAIpQLSfPAK8URL/viewform?embedded=true',
+      'PAK_9': 'https://docs.google.com/forms/d/e/1FAIpQLSfPAK9URL/viewform?embedded=true',
+      // Tambahkan semua kombinasi mapel_kelas yang dibutuhkan
+      'PKN_7': 'https://docs.google.com/forms/d/e/1FAIpQLSfPKN7URL/viewform?embedded=true',
+      'Matematika_8': 'https://docs.google.com/forms/d/e/1FAIpQLSfMTK8URL/viewform?embedded=true',
+      // dan seterusnya...
+    };
+
+    function mulaiUjian() {
+      const mapel = document.getElementById('mapel').value;
+      const kelas = document.getElementById('kelas').value;
+      const frame = document.getElementById('formFrame');
+
+      if (!mapel || !kelas) {
+        alert("Silakan pilih mata pelajaran dan kelas terlebih dahulu.");
+        return;
+      }
+
+      const key = `${mapel}_${kelas}`;
+      const url = formLinks[key];
+
+      if (url) {
+        frame.src = url;
+        frame.style.display = 'block';
+      } else {
+        alert("Link Formulir belum tersedia untuk pilihan tersebut.");
+        frame.style.display = 'none';
+      }
+    }
+  </script>
 </body>
 </html>
+
