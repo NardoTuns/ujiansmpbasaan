@@ -2,39 +2,50 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Login Kuis</title>
+  <title>Login Kuis Sekolah</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 40px;
-      background-color: #f5f5f5;
+      background-color: #eef2f3;
+      padding: 30px;
     }
 
     .container {
-      max-width: 500px;
+      max-width: 600px;
       margin: auto;
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
+      background-color: white;
+      padding: 25px;
+      border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
 
-    input[type="text"], input[type="password"] {
+    h2 {
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+    }
+
+    input, select {
       width: 100%;
       padding: 10px;
-      margin: 12px 0;
-      border: 1px solid #ccc;
+      margin-top: 5px;
       border-radius: 8px;
+      border: 1px solid #ccc;
     }
 
     button {
-      padding: 10px 20px;
-      background-color: #28a745;
+      margin-top: 20px;
+      padding: 12px 20px;
+      background-color: #007bff;
+      color: white;
       border: none;
       border-radius: 8px;
-      color: white;
-      font-size: 16px;
       cursor: pointer;
+      width: 100%;
+      font-size: 16px;
     }
 
     iframe {
@@ -52,33 +63,81 @@
 <body>
   <div class="container" id="login-container">
     <h2>Login Kuis</h2>
-    <input type="text" id="name" placeholder="Nama Anda" required>
-    <input type="password" id="password" placeholder="Password">
+    <label for="name">Nama:</label>
+    <input type="text" id="name" required>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" placeholder="Masukkan password">
+
+    <label for="kelas">Pilih Kelas:</label>
+    <select id="kelas">
+      <option value="">-- Pilih Kelas --</option>
+      <option value="7">Kelas 7</option>
+      <option value="8">Kelas 8</option>
+      <option value="9">Kelas 9</option>
+    </select>
+
+    <label for="mapel">Pilih Mata Pelajaran:</label>
+    <select id="mapel">
+      <option value="">-- Pilih Mapel --</option>
+      <option value="PKn">PKn</option>
+      <option value="PAK">PAK</option>
+      <option value="Bahasa Indonesia">Bah. Indonesia</option>
+      <option value="Bahasa Inggris">Bah. Inggris</option>
+      <option value="Matematika">Matematika</option>
+      <option value="IPA">IPA</option>
+      <option value="IPS">IPS</option>
+      <option value="PJOK">PJOK</option>
+      <option value="TIK">TIK</option>
+      <option value="Prakarya">Prakarya</option>
+      <option value="MULOK">MULOK</option>
+    </select>
+
     <button onclick="login()">Login</button>
   </div>
 
   <div id="form-container">
-    <iframe 
-      src="https://docs.google.com/forms/d/e/1FAIpQLSev7EJUQqvGWDzn-VPZLmSbvMrreCc6fQYoMVTe8L1n2iz_yA/viewform?embedded=true">
-    </iframe>
+    <iframe id="form-frame" src=""></iframe>
   </div>
 
   <script>
     function login() {
       const name = document.getElementById("name").value.trim();
       const password = document.getElementById("password").value;
+      const kelas = document.getElementById("kelas").value;
+      const mapel = document.getElementById("mapel").value;
 
-      if (name === "") {
-        alert("Nama harus diisi.");
+      if (name === "" || password === "" || kelas === "" || mapel === "") {
+        alert("Harap lengkapi semua isian.");
         return;
       }
 
-      if (password === "123") {
-        document.getElementById("login-container").style.display = "none";
-        document.getElementById("form-container").style.display = "block";
-      } else {
+      if (password !== "123") {
         alert("Password salah.");
+        return;
       }
+
+      // ----------- GANTI LINK DI SINI -----------
+      // Format: mapel_kelas
+      const formLinks = {
+        "PKn_7": "<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSev7EJUQqvGWDzn-VPZLmSbvMrreCc6fQYoMVTe8L1n2iz_yA/viewform?embedded=true" width="640" height="12890" frameborder="0" marginheight="0" marginwidth="0">Memuat…</iframe>",
+        "PKn_8": "https://docs.google.com/forms/d/PKn_Kelas8_LINK/viewform?embedded=true",
+        "PKn_9": "https://docs.google.com/forms/d/PKn_Kelas9_LINK/viewform?embedded=true",
+      };
+
+      const key = `${mapel}_${kelas}`;
+      const formLink = formLinks[key];
+
+      if (!formLink) {
+        alert("Link kuis belum tersedia untuk mapel dan kelas ini.");
+        return;
+      }
+
+      // Sembunyikan form login, tampilkan iframe
+      document.getElementById("login-container").style.display = "none";
+      document.getElementById("form-container").style.display = "block";
+
+      document.getElementById("form-frame").src = formLink;
     }
   </script>
 </body>
