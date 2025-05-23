@@ -52,16 +52,17 @@
         button:hover {
             background-color: #45a049;
         }
-        .subject-selection {
+        .selection-container {
             display: none;
             margin-top: 20px;
         }
-        .subject-grid {
+        .grid-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 10px;
+            margin-bottom: 20px;
         }
-        .subject-item, .class-item {
+        .grid-item {
             padding: 15px;
             background-color: #e9e9e9;
             border-radius: 5px;
@@ -69,17 +70,8 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
-        .subject-item:hover, .class-item:hover {
+        .grid-item:hover {
             background-color: #d9d9d9;
-        }
-        .class-selection {
-            display: none;
-            margin-top: 20px;
-        }
-        .class-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
         }
         .exam-frame {
             display: none;
@@ -93,6 +85,11 @@
             background-color: #4CAF50;
             color: white;
         }
+        .navigation {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
     </style>
 </head>
 <body>
@@ -100,7 +97,7 @@
         <h1>Sistem Ujian Online</h1>
         
         <!-- Form Login -->
-        <div class="login-form">
+        <div class="login-form" id="loginForm">
             <h2>Login</h2>
             <div class="form-group">
                 <label for="nama">Nama:</label>
@@ -113,31 +110,28 @@
             <button id="loginBtn">Login</button>
         </div>
         
-        <!-- Pilihan Mata Pelajaran -->
-        <div class="subject-selection" id="subjectSelection">
-            <h2>Pilih Mata Pelajaran</h2>
-            <div class="subject-grid">
-                <div class="subject-item" data-subject="PKn">PKn</div>
-                <div class="subject-item" data-subject="PAK">PAK</div>
-                <div class="subject-item" data-subject="Bah. Indonesia">Bah. Indonesia</div>
-                <div class="subject-item" data-subject="Bah. Inggris">Bah. Inggris</div>
-                <div class="subject-item" data-subject="Matematika">Matematika</div>
-                <div class="subject-item" data-subject="IPA">IPA</div>
-                <div class="subject-item" data-subject="IPS">IPS</div>
-                <div class="subject-item" data-subject="PJOK">PJOK</div>
-                <div class="subject-item" data-subject="TIK">TIK</div>
-                <div class="subject-item" data-subject="Prakarya">Prakarya</div>
-                <div class="subject-item" data-subject="MULOK">MULOK</div>
+        <!-- Container untuk pilihan -->
+        <div class="selection-container" id="selectionContainer">
+            <!-- Pilihan Mata Pelajaran -->
+            <div id="subjectSelection">
+                <h2>Pilih Mata Pelajaran</h2>
+                <div class="grid-container" id="subjectGrid">
+                    <!-- Mata pelajaran akan diisi oleh JavaScript -->
+                </div>
             </div>
-        </div>
-        
-        <!-- Pilihan Kelas -->
-        <div class="class-selection" id="classSelection">
-            <h2>Pilih Kelas</h2>
-            <div class="class-grid">
-                <div class="class-item" data-class="7">Kelas 7</div>
-                <div class="class-item" data-class="8">Kelas 8</div>
-                <div class="class-item" data-class="9">Kelas 9</div>
+            
+            <!-- Pilihan Kelas -->
+            <div id="classSelection" style="display: none;">
+                <h2>Pilih Kelas</h2>
+                <div class="grid-container" id="classGrid">
+                    <!-- Kelas akan diisi oleh JavaScript -->
+                </div>
+            </div>
+            
+            <!-- Tombol navigasi -->
+            <div class="navigation">
+                <button id="backBtn" style="display: none;">Kembali</button>
+                <button id="nextBtn" style="display: none;">Lanjut</button>
             </div>
         </div>
         
@@ -146,28 +140,86 @@
     </div>
 
     <script>
-        // Variabel untuk menyimpan pilihan
-        let selectedSubject = null;
-        let selectedClass = null;
+        // Data mata pelajaran
+        const subjects = [
+            "PKn", "PAK", "Bah. Indonesia", "Bah. Inggris", 
+            "Matematika", "IPA", "IPS", "PJOK", "TIK", 
+            "Prakarya", "MULOK"
+        ];
+        
+        // Data kelas
+        const classes = ["7", "8", "9"];
         
         // Link untuk setiap mata pelajaran dan kelas
         // CATATAN: Ganti link berikut sesuai dengan kebutuhan Anda
         const examLinks = {
             // Format: "MataPelajaran_Kelas": "URL"
-            "PKn_7": "<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSev7EJUQqvGWDzn-VPZLmSbvMrreCc6fQYoMVTe8L1n2iz_yA/viewform?embedded=true" width="640" height="12890" frameborder="0" marginheight="0" marginwidth="0">Memuat…</iframe>",
+            "PKn_7": "https://example.com/soal-pkn-kelas7",
             "PKn_8": "https://example.com/soal-pkn-kelas8",
             "PKn_9": "https://example.com/soal-pkn-kelas9",
             "PAK_7": "https://example.com/soal-pak-kelas7",
             "PAK_8": "https://example.com/soal-pak-kelas8",
             "PAK_9": "https://example.com/soal-pak-kelas9",
-            // Tambahkan link untuk semua kombinasi mata pelajaran dan kelas
-            // ...
-            // Contoh lainnya:
+            // Tambahkan link untuk semua kombinasi yang diperlukan
             "Matematika_7": "https://example.com/soal-matematika-kelas7",
             "Matematika_8": "https://example.com/soal-matematika-kelas8",
-            "Matematika_9": "https://example.com/soal-matematika-kelas9",
+            "Matematika_9": "https://example.com/soal-matematika-kelas9"
             // Dan seterusnya untuk semua mata pelajaran
         };
+        
+        // Variabel untuk menyimpan pilihan
+        let selectedSubject = null;
+        let selectedClass = null;
+        
+        // Fungsi untuk mengisi pilihan mata pelajaran
+        function populateSubjects() {
+            const subjectGrid = document.getElementById('subjectGrid');
+            subjectGrid.innerHTML = '';
+            
+            subjects.forEach(subject => {
+                const item = document.createElement('div');
+                item.className = 'grid-item';
+                item.textContent = subject;
+                item.setAttribute('data-subject', subject);
+                item.addEventListener('click', function() {
+                    // Hapus seleksi sebelumnya
+                    document.querySelectorAll('#subjectGrid .grid-item').forEach(i => {
+                        i.classList.remove('selected');
+                    });
+                    // Tambahkan seleksi pada item yang diklik
+                    this.classList.add('selected');
+                    selectedSubject = this.getAttribute('data-subject');
+                    // Tampilkan tombol lanjut
+                    document.getElementById('nextBtn').style.display = 'block';
+                });
+                subjectGrid.appendChild(item);
+            });
+        }
+        
+        // Fungsi untuk mengisi pilihan kelas
+        function populateClasses() {
+            const classGrid = document.getElementById('classGrid');
+            classGrid.innerHTML = '';
+            
+            classes.forEach(cls => {
+                const item = document.createElement('div');
+                item.className = 'grid-item';
+                item.textContent = `Kelas ${cls}`;
+                item.setAttribute('data-class', cls);
+                item.addEventListener('click', function() {
+                    // Hapus seleksi sebelumnya
+                    document.querySelectorAll('#classGrid .grid-item').forEach(i => {
+                        i.classList.remove('selected');
+                    });
+                    // Tambahkan seleksi pada item yang diklik
+                    this.classList.add('selected');
+                    selectedClass = this.getAttribute('data-class');
+                    // Tampilkan tombol lanjut
+                    document.getElementById('nextBtn').style.display = 'block';
+                });
+                classGrid.appendChild(item);
+            });
+        }
         
         // Event listener untuk tombol login
         document.getElementById('loginBtn').addEventListener('click', function() {
@@ -177,56 +229,53 @@
             // Validasi sederhana
             if (nama && password) {
                 // Sembunyikan form login
-                document.querySelector('.login-form').style.display = 'none';
-                // Tampilkan pilihan mata pelajaran
-                document.getElementById('subjectSelection').style.display = 'block';
+                document.getElementById('loginForm').style.display = 'none';
+                // Tampilkan container pilihan
+                document.getElementById('selectionContainer').style.display = 'block';
+                // Isi pilihan mata pelajaran
+                populateSubjects();
+                // Tampilkan tombol lanjut
+                document.getElementById('nextBtn').style.display = 'block';
             } else {
                 alert('Silakan isi nama dan password!');
             }
         });
         
-        // Event listener untuk pilihan mata pelajaran
-        const subjectItems = document.querySelectorAll('.subject-item');
-        subjectItems.forEach(item => {
-            item.addEventListener('click', function() {
-                // Hapus seleksi sebelumnya
-                subjectItems.forEach(i => i.classList.remove('selected'));
-                // Tambahkan seleksi pada item yang diklik
-                this.classList.add('selected');
-                // Simpan pilihan
-                selectedSubject = this.getAttribute('data-subject');
-                // Tampilkan pilihan kelas
-                document.getElementById('classSelection').style.display = 'block';
-                // Sembunyikan iframe jika ada
-                document.getElementById('examFrame').style.display = 'none';
-            });
+        // Event listener untuk tombol kembali
+        document.getElementById('backBtn').addEventListener('click', function() {
+            if (selectedClass) {
+                // Kembali ke pilihan mata pelajaran
+                selectedClass = null;
+                document.getElementById('classSelection').style.display = 'none';
+                document.getElementById('subjectSelection').style.display = 'block';
+                this.style.display = 'none';
+                document.getElementById('nextBtn').style.display = 'block';
+            }
         });
         
-        // Event listener untuk pilihan kelas
-        const classItems = document.querySelectorAll('.class-item');
-        classItems.forEach(item => {
-            item.addEventListener('click', function() {
-                // Hapus seleksi sebelumnya
-                classItems.forEach(i => i.classList.remove('selected'));
-                // Tambahkan seleksi pada item yang diklik
-                this.classList.add('selected');
-                // Simpan pilihan
-                selectedClass = this.getAttribute('data-class');
-                
+        // Event listener untuk tombol lanjut
+        document.getElementById('nextBtn').addEventListener('click', function() {
+            if (selectedSubject && !selectedClass) {
+                // Lanjut ke pilihan kelas
+                document.getElementById('subjectSelection').style.display = 'none';
+                document.getElementById('classSelection').style.display = 'block';
+                document.getElementById('backBtn').style.display = 'block';
+                populateClasses();
+            } else if (selectedSubject && selectedClass) {
                 // Tampilkan iframe dengan soal yang sesuai
-                if (selectedSubject && selectedClass) {
-                    const examFrame = document.getElementById('examFrame');
-                    const examKey = `${selectedSubject}_${selectedClass}`;
-                    
-                    // Cek apakah link tersedia
-                    if (examLinks[examKey]) {
-                        examFrame.src = examLinks[examKey];
-                        examFrame.style.display = 'block';
-                    } else {
-                        alert('Soal untuk kombinasi ini belum tersedia.');
-                    }
+                const examFrame = document.getElementById('examFrame');
+                const examKey = `${selectedSubject}_${selectedClass}`;
+                
+                // Cek apakah link tersedia
+                if (examLinks[examKey]) {
+                    examFrame.src = examLinks[examKey];
+                    examFrame.style.display = 'block';
+                    // Sembunyikan container pilihan
+                    document.getElementById('selectionContainer').style.display = 'none';
+                } else {
+                    alert('Soal untuk kombinasi ini belum tersedia.');
                 }
-            });
+            }
         });
     </script>
 </body>
