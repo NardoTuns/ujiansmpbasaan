@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Soal dan Jawaban</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+    }
+
+    iframe {
+      width: 100%;
+      height: 500px;
+      border: none;
+    }
+
+    .jawaban-container {
+      padding: 20px;
+      background-color: #f8f8f8;
+    }
+
+    .soal-item {
+      margin-bottom: 15px;
+      padding: 10px;
+      background: #fff;
+      border-radius: 5px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .soal-item label {
+      margin-right: 15px;
+    }
+
+    .tombol-kirim {
+      margin-top: 30px;
+      padding: 12px 25px;
+      font-size: 16px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .tombol-kirim:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PDF Soal -->
+  <iframe src="soal.pdf"></iframe>
+
+  <!-- Jawaban -->
+  <div class="jawaban-container">
+    <h2>Jawaban Anda</h2>
+
+    <form id="formJawaban">
+      <!-- Dibuat otomatis oleh JavaScript -->
+    </form>
+
+    <button class="tombol-kirim" onclick="kirimJawaban()">Kirim Jawaban</button>
+  </div>
+
+  <script>
+    const form = document.getElementById('formJawaban');
+
+    // Buat 40 nomor soal
+    for (let i = 1; i <= 40; i++) {
+      const div = document.createElement('div');
+      div.className = 'soal-item';
+      div.innerHTML = `<strong>Nomor ${i}</strong><br>
+        <label><input type="radio" name="soal${i}" value="A"> A</label>
+        <label><input type="radio" name="soal${i}" value="B"> B</label>
+        <label><input type="radio" name="soal${i}" value="C"> C</label>
+        <label><input type="radio" name="soal${i}" value="D"> D</label>`;
+      form.appendChild(div);
+    }
+
+    function kirimJawaban() {
+      const jawaban = {};
+      for (let i = 1; i <= 40; i++) {
+        const pilihan = document.querySelector(`input[name="soal${i}"]:checked`);
+        jawaban[`soal${i}`] = pilihan ? pilihan.value : '-';
+      }
+
+      console.log("Jawaban dikirim:", jawaban);
+      alert("Jawaban Anda telah disimpan di konsol (demo).");
+    }
+  </script>
+</body>
+</html>
