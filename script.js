@@ -143,51 +143,46 @@ Guntur Wibowo;8a`;
     
     // Fungsi untuk mengirim nilai ke spreadsheet
     function submitScores() {
-        const subject = subjectSelect.value;
-        const inputs = document.querySelectorAll('.score-input');
-        const scores = [];
-        
-        inputs.forEach(input => {
-            const value = input.value.trim();
-            if (value) {
-                scores.push({
-                    name: input.dataset.name,
-                    class: input.dataset.class,
-                    subject: subject,
-                    score: parseInt(value, 10)
-                });
-            }
-        });
-        
-        if (scores.length === 0) {
-            showMessage('Tidak ada nilai yang dimasukkan.', 'error');
-            return;
+    const subject = subjectSelect.value;
+    const inputs = document.querySelectorAll('.score-input');
+    const scores = [];
+    
+    inputs.forEach(input => {
+        const value = input.value.trim();
+        if (value) {
+            scores.push({
+                name: input.dataset.name,
+                class: input.dataset.class,
+                subject: subject,
+                score: parseInt(value, 10)
+            });
         }
-        
-        // Kirim data ke Google Apps Script
-        fetch(SCRIPT_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ data: scores })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showMessage('Nilai berhasil disimpan!', 'success');
-                // Reset input
-                inputs.forEach(input => input.value = '');
-            } else {
-                showMessage('Gagal menyimpan nilai: ' + data.message, 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showMessage('Terjadi kesalahan saat menyimpan nilai.', 'error');
-        });
+    });
+    
+    if (scores.length === 0) {
+        showMessage('Tidak ada nilai yang dimasukkan.', 'error');
+        return;
     }
     
+    // Create a form and submit it as a workaround for CORS
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = SCRIPT_URL;
+    form.target = '_blank';
+    
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'data';
+    input.value = JSON.stringify(scores);
+    form.appendChild(input);
+    
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+    
+    showMessage('Nilai berhasil dikirim!', 'success');
+    inputs.forEach(input => input.value = '');
+}
     // Fungsi untuk menampilkan pesan
     function showMessage(message, type) {
         messageDiv.textContent = message;
