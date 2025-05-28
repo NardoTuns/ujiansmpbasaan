@@ -84,25 +84,34 @@
       document.getElementById("input-nilai").classList.remove("hidden");
     }
 
-    async function kirim(e) {
-      e.preventDefault();
-      const nilaiInputs = document.querySelectorAll("input[name='nilai']");
-      const data = Array.from(nilaiInputs).map(input => ({
-        nama: input.dataset.nama,
-        kelas: kelasTerpilih.toUpperCase(),
-        mapel: mapelTerpilih,
-        nilai: input.value
-      }));
+   async function kirim(e) {
+  e.preventDefault();
+  try {
+    const nilaiInputs = document.querySelectorAll("input[name='nilai']");
+    const data = Array.from(nilaiInputs).map(input => ({
+      nama: input.dataset.nama,
+      kelas: kelasTerpilih.toUpperCase(),
+      mapel: mapelTerpilih,
+      nilai: input.value
+    }));
 
-      for (const entri of data) {
-        await fetch("https://script.google.com/macros/s/AKfycbzbRqGwyk40MbZSswA3GwDrXmc9oWaY7hqIxqjqUxnastTzFSKGF4mrkxrbufmTATPnxA/exec", {
-          method: "POST",
-          body: new URLSearchParams(entri)
-        });
-      }
+    const response = await fetch("https://script.google.com/macros/s/SCRIPT_ID/exec", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "input_nilai", data: data }),
+    });
 
+    const result = await response.json();
+    if (result.status === "Sukses") {
       alert("Nilai berhasil dikirim!");
+    } else {
+      throw new Error(result.error || "Gagal mengirim data");
     }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Terjadi error. Lihat konsol untuk detail.");
+  }
+}
   </script>
 </body>
 </html>
