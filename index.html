@@ -1,72 +1,39 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Input Data Siswa</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        input { width: 100%; padding: 8px; box-sizing: border-box; }
-        button { background-color: #4CAF50; color: white; padding: 10px 15px; border: none; cursor: pointer; }
-        button:hover { background-color: #45a049; }
-    </style>
-</head>
-<body>
-    <h1>Input Data Siswa</h1>
-    <form id="dataForm">
-        <table>
-            <tr>
-                <th>No</th>
-                <th>Nama</th>
-                <th>Mapei</th>
-                <th>Kelas</th>
-                <th>Rombel</th>
-                <th>Jumlah Benar</th>
-            </tr>
-            <tr>
-                <td><input type="text" id="no" readonly></td>
-                <td><input type="text" id="nama" required></td>
-                <td><input type="text" id="mapei" required></td>
-                <td><input type="text" id="kelas" required></td>
-                <td><input type="text" id="rombel" required></td>
-                <td><input type="number" id="jumlah_benar" required></td>
-            </tr>
-        </table>
-        <button type="submit">Submit</button>
-    </form>
-
-    <div id="message"></div>
-
-    <script>
-        document.getElementById('dataForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const data = {
-                nama: document.getElementById('nama').value,
-                mapei: document.getElementById('mapei').value,
-                kelas: document.getElementById('kelas').value,
-                rombel: document.getElementById('rombel').value,
-                jumlah_benar: document.getElementById('jumlah_benar').value
-            };
-            
-            // Ganti URL_DEPLOY_ANDA dengan URL dari Apps Script
-            fetch('https://script.google.com/macros/s/AKfycbzrV9f9ECDa_AHInjcHYEesZ-TmGeObnYcrb0cai5ULl6PlOmJQFXQ9TAofWpxTGmAi/exec', {
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.text())
-            .then(message => {
-                document.getElementById('message').textContent = message;
-                document.getElementById('dataForm').reset();
-            })
-            .catch(error => {
-                document.getElementById('message').textContent = 'Error: ' + error;
-            });
-        });
-    </script>
-</body>
-</html>
+<script>
+document.getElementById('dataForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const data = {
+        nama: document.getElementById('nama').value,
+        mapei: document.getElementById('mapei').value,
+        kelas: document.getElementById('kelas').value,
+        rombel: document.getElementById('rombel').value,
+        jumlah_benar: document.getElementById('jumlah_benar').value
+    };
+    
+    // Pastikan URL benar (akhir dengan /exec bukan /dev)
+    fetch('https://script.google.com/macros/s/AKfycbzrV9f9ECDa_AHInjcHYEesZ-TmGeObnYcrb0cai5ULl6PlOmJQFXQ9TAofWpxTGmAi/exec', {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.text();
+    })
+    .then(text => {
+        try {
+            const data = JSON.parse(text);
+            document.getElementById('message').textContent = data.message;
+            document.getElementById('dataForm').reset();
+        } catch {
+            document.getElementById('message').textContent = text;
+        }
+    })
+    .catch(error => {
+        document.getElementById('message').textContent = 'Error: ' + error.message;
+    });
+});
+</script>
