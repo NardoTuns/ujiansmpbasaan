@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const VALID_PASSWORD = '12345';
     
     // URL Google Apps Script
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbywxmxnTVLhXiKcqx1JBKA8Uoc6qSt8vKzkt5r3v1c9aOm1U_rVjLEr1FyuqAR9Pr2Oig/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyBPTyavhWsgoKyadEpY3korz-CUf1Um5zmDrSDHNauYXsifqU9X5T0-PBW-ipn4s8-TQ/exec';
     
     // Event listener untuk tombol Mulai
     startBtn.addEventListener('click', function() {
