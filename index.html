@@ -1,87 +1,72 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Input Skor Siswa</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 400px;
-      margin: auto;
-      padding-top: 50px;
-    }
-    label, input, button {
-      display: block;
-      width: 100%;
-      margin-bottom: 15px;
-    }
-    input, button {
-      padding: 10px;
-      font-size: 16px;
-    }
-    .success {
-      color: green;
-    }
-    .error {
-      color: red;
-    }
-  </style>
+    <title>Input Data Siswa</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        input { width: 100%; padding: 8px; box-sizing: border-box; }
+        button { background-color: #4CAF50; color: white; padding: 10px 15px; border: none; cursor: pointer; }
+        button:hover { background-color: #45a049; }
+    </style>
 </head>
 <body>
+    <h1>Input Data Siswa</h1>
+    <form id="dataForm">
+        <table>
+            <tr>
+                <th>No</th>
+                <th>Nama</th>
+                <th>Mapei</th>
+                <th>Kelas</th>
+                <th>Rombel</th>
+                <th>Jumlah Benar</th>
+            </tr>
+            <tr>
+                <td><input type="text" id="no" readonly></td>
+                <td><input type="text" id="nama" required></td>
+                <td><input type="text" id="mapei" required></td>
+                <td><input type="text" id="kelas" required></td>
+                <td><input type="text" id="rombel" required></td>
+                <td><input type="number" id="jumlah_benar" required></td>
+            </tr>
+        </table>
+        <button type="submit">Submit</button>
+    </form>
 
-  <h2>Form Input Skor</h2>
+    <div id="message"></div>
 
-  <label for="nama">Nama</label>
-  <input type="text" id="nama" placeholder="Masukkan nama">
-
-  <label for="kelas">Kelas</label>
-  <input type="text" id="kelas" placeholder="Masukkan kelas">
-
-  <label for="skor">Skor</label>
-  <input type="number" id="skor" placeholder="Masukkan skor">
-
-  <button onclick="kirimData()">Kirim</button>
-
-  <p id="status"></p>
-
-  <script>
-    function kirimData() {
-      const nama = document.getElementById("nama").value;
-      const kelas = document.getElementById("kelas").value;
-      const skor = document.getElementById("skor").value;
-
-      const url = "https://script.google.com/macros/s/AKfycbxiyb1onLoIZ2ftWqqXdMmRuNkKNIKGvQWoNH-6OkBqeqRmnkhIyKtqmPAD3WxzefX43Q/exec";
-
-      const data = {
-        nama: nama,
-        kelas: kelas,
-        skor: skor
-      };
-
-      fetch(url, {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: {
-          "Content-Type": "application/json"
-        }
-      })
-      .then(response => response.json())
-      .then(json => {
-        const status = document.getElementById("status");
-        if (json.status === "sukses") {
-          status.innerText = "Data berhasil dikirim!";
-          status.className = "success";
-        } else {
-          status.innerText = "Gagal mengirim data: " + json.error;
-          status.className = "error";
-        }
-      })
-      .catch(error => {
-        document.getElementById("status").innerText = "Terjadi kesalahan: " + error;
-        document.getElementById("status").className = "error";
-      });
-    }
-  </script>
-
+    <script>
+        document.getElementById('dataForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const data = {
+                nama: document.getElementById('nama').value,
+                mapei: document.getElementById('mapei').value,
+                kelas: document.getElementById('kelas').value,
+                rombel: document.getElementById('rombel').value,
+                jumlah_benar: document.getElementById('jumlah_benar').value
+            };
+            
+            // Ganti URL_DEPLOY_ANDA dengan URL dari Apps Script
+            fetch('URL_DEPLOY_ANDA', {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.text())
+            .then(message => {
+                document.getElementById('message').textContent = message;
+                document.getElementById('dataForm').reset();
+            })
+            .catch(error => {
+                document.getElementById('message').textContent = 'Error: ' + error;
+            });
+        });
+    </script>
 </body>
 </html>
