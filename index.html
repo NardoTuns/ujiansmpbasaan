@@ -1,117 +1,64 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Input Nilai Siswa</title>
-  <style>
-    body { font-family: sans-serif; padding: 20px; }
-    .hidden { display: none; }
-    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    th { background-color: #f0f0f0; }
-    input[type="number"] { width: 60px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Input Nilai Siswa</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h2>Login Guru</h2>
-  <label>Mata Pelajaran:</label>
-  <select id="mapel">
-    <option value="">-- Pilih --</option>
-    <option>PAK</option><option>PKN</option><option>B.IND</option><option>B.ING</option>
-    <option>MATE</option><option>IPA</option><option>IPS</option><option>PRAKARYA</option>
-    <option>TIK</option><option>PJOK</option><option>MULOK</option><option>LAINNYA</option>
-  </select><br><br>
-
-  <label>Kelas:</label>
-  <select id="kelas">
-    <option value="">-- Pilih --</option>
-    <option>7a</option>
-    <option>7b</option>
-    <option>8a</option>
-    <option>8b</option>
-    <option>9a</option>
-    <option>9b</option>
-  </select><br><br>
-
-  <label>Password:</label>
-  <input type="password" id="password"><br><br>
-
-  <button onclick="login()">Login</button>
-
-  <div id="input-nilai" class="hidden">
-    <h3>Input Nilai Siswa</h3>
-    <form onsubmit="kirim(event)">
-      <table id="tabel-nilai">
-        <thead>
-          <tr><th>Nama</th><th>Nilai</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table><br>
-      <button type="submit">Kirim</button>
-    </form>
-  </div>
-
-  <script>
-    const PASSWORD = "123";
-    let mapelTerpilih = "", kelasTerpilih = "";
-
-    async function login() {
-      mapelTerpilih = document.getElementById("mapel").value;
-      kelasTerpilih = document.getElementById("kelas").value;
-      const pass = document.getElementById("password").value;
-
-      if (!mapelTerpilih || !kelasTerpilih || pass !== PASSWORD) {
-        alert("Data tidak lengkap atau password salah!");
-        return;
-      }
-
-      const res = await fetch("siswa.txt");
-      const teks = await res.text();
-      const siswa = teks.trim().split("\n").filter(baris => {
-        const [_, kelas] = baris.split(";");
-        return kelas.trim().toLowerCase() === kelasTerpilih;
-      });
-
-      const tbody = document.querySelector("#tabel-nilai tbody");
-      tbody.innerHTML = "";
-      siswa.forEach(baris => {
-        const [nama] = baris.split(";");
-        const row = document.createElement("tr");
-        row.innerHTML = `<td>${nama}</td><td><input type="number" name="nilai" min="0" max="100" data-nama="${nama}"></td>`;
-        tbody.appendChild(row);
-      });
-
-      document.getElementById("input-nilai").classList.remove("hidden");
-    }
-
-   async function kirim(e) {
-  e.preventDefault();
-  try {
-    const nilaiInputs = document.querySelectorAll("input[name='nilai']");
-    const data = Array.from(nilaiInputs).map(input => ({
-      nama: input.dataset.nama,
-      kelas: kelasTerpilih.toUpperCase(),
-      mapel: mapelTerpilih,
-      nilai: input.value
-    }));
-
-    const response = await fetch("https://script.google.com/macros/s/SCRIPT_ID/exec", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "input_nilai", data: data }),
-    });
-
-    const result = await response.json();
-    if (result.status === "Sukses") {
-      alert("Nilai berhasil dikirim!");
-    } else {
-      throw new Error(result.error || "Gagal mengirim data");
-    }
-  } catch (error) {
-    console.error("Error:", error);
-    alert("Terjadi error. Lihat konsol untuk detail.");
-  }
-}
-  </script>
+    <div class="container">
+        <h1>Sistem Input Nilai Siswa</h1>
+        
+        <div id="login-section">
+            <div class="form-group">
+                <label for="subject">Mata Pelajaran:</label>
+                <select id="subject" class="form-control">
+                    <option value="PAK">PAK</option>
+                    <option value="PKN">PKN</option>
+                    <option value="B.IND">B. Indonesia</option>
+                    <option value="B.ING">B. Inggris</option>
+                    <option value="MATE">Matematika</option>
+                    <option value="IPA">IPA</option>
+                    <option value="IPS">IPS</option>
+                    <option value="TIK">TIK</option>
+                    <option value="PJOK">PJOK</option>
+                    <option value="PRAKARYA">Prakarya</option>
+                    <option value="MULOK">Mulok</option>
+                    <option value="LAIN">Lainnya</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="class">Kelas:</label>
+                <select id="class" class="form-control">
+                    <option value="7a">7A</option>
+                    <option value="7b">7B</option>
+                    <option value="8a">8A</option>
+                    <option value="8b">8B</option>
+                    <option value="9a">9A</option>
+                    <option value="9b">9B</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" class="form-control" placeholder="Masukkan password">
+            </div>
+            
+            <button id="start-btn" class="btn">Mulai</button>
+        </div>
+        
+        <div id="input-section" style="display: none;">
+            <h2 id="input-title"></h2>
+            <div id="students-list"></div>
+            <button id="submit-btn" class="btn">Simpan Nilai</button>
+            <button id="back-btn" class="btn btn-secondary">Kembali</button>
+        </div>
+        
+        <div id="message" class="message"></div>
+    </div>
+    
+    <script src="script.js"></script>
 </body>
 </html>
