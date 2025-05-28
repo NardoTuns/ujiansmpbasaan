@@ -142,7 +142,7 @@ Guntur Wibowo;8a`;
     }
     
     // Fungsi untuk mengirim nilai ke spreadsheet
-    function submitScores() {
+function submitScores() {
     const subject = subjectSelect.value;
     const inputs = document.querySelectorAll('.score-input');
     const scores = [];
@@ -164,24 +164,27 @@ Guntur Wibowo;8a`;
         return;
     }
     
-    // Create a form and submit it as a workaround for CORS
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = SCRIPT_URL;
-    form.target = '_blank';
-    
-    const input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = 'data';
-    input.value = JSON.stringify(scores);
-    form.appendChild(input);
-    
-    document.body.appendChild(form);
-    form.submit();
-    document.body.removeChild(form);
-    
-    showMessage('Nilai berhasil dikirim!', 'success');
-    inputs.forEach(input => input.value = '');
+    // Kirim data ke Google Apps Script
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `data=${encodeURIComponent(JSON.stringify(scores))}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showMessage('Nilai berhasil disimpan!', 'success');
+            inputs.forEach(input => input.value = '');
+        } else {
+            showMessage('Gagal menyimpan nilai: ' + data.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showMessage('Terjadi kesalahan saat menyimpan nilai.', 'error');
+    });
 }
     // Fungsi untuk menampilkan pesan
     function showMessage(message, type) {
