@@ -18,8 +18,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Password yang valid
     const VALID_PASSWORD = '12345';
     
-    // URL Google Apps Script (akan dijelaskan nanti)
-    const SCRIPT_URL = 'URL_APPS_SCRIPT_ANDA';
+    // URL Google Apps Script
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbywxmxnTVLhXiKcqx1JBKA8Uoc6qSt8vKzkt5r3v1c9aOm1U_rVjLEr1FyuqAR9Pr2Oig/exec';
     
     // Event listener untuk tombol Mulai
     startBtn.addEventListener('click', function() {
