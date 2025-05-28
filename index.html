@@ -2,64 +2,86 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Login</title>
+  <title>Input Skor Siswa</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      display: flex;
-      height: 100vh;
-      justify-content: center;
-      align-items: center;
-      background-color: #f2f2f2;
+      max-width: 400px;
+      margin: auto;
+      padding-top: 50px;
     }
-    .login-box {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-      text-align: center;
-    }
-    input[type="text"] {
-      padding: 10px;
-      width: 80%;
+    label, input, button {
+      display: block;
+      width: 100%;
       margin-bottom: 15px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
     }
-    button {
-      padding: 10px 20px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
+    input, button {
+      padding: 10px;
+      font-size: 16px;
     }
-    button:hover {
-      background-color: #45a049;
+    .success {
+      color: green;
+    }
+    .error {
+      color: red;
     }
   </style>
 </head>
 <body>
-  <div class="login-box">
-    <h2>Silakan Masuk</h2>
-    <input type="text" id="nama" placeholder="Masukkan Nama Anda" required>
-    <br>
-    <button onclick="login()">Login</button>
-  </div>
+
+  <h2>Form Input Skor</h2>
+
+  <label for="nama">Nama</label>
+  <input type="text" id="nama" placeholder="Masukkan nama">
+
+  <label for="kelas">Kelas</label>
+  <input type="text" id="kelas" placeholder="Masukkan kelas">
+
+  <label for="skor">Skor</label>
+  <input type="number" id="skor" placeholder="Masukkan skor">
+
+  <button onclick="kirimData()">Kirim</button>
+
+  <p id="status"></p>
 
   <script>
-    function login() {
-      const nama = document.getElementById('nama').value.trim();
-      if (nama !== '') {
-        // Simpan nama di localStorage jika ingin digunakan di halaman berikut
-        localStorage.setItem('namaPengguna', nama);
-        // Pindah ke halaman mapel.html
-        window.location.href = 'soal_jawab.html';
-      } else {
-        alert('Silakan masukkan nama terlebih dahulu.');
-      }
+    function kirimData() {
+      const nama = document.getElementById("nama").value;
+      const kelas = document.getElementById("kelas").value;
+      const skor = document.getElementById("skor").value;
+
+      const url = "https://script.google.com/macros/s/AKfycbxiyb1onLoIZ2ftWqqXdMmRuNkKNIKGvQWoNH-6OkBqeqRmnkhIyKtqmPAD3WxzefX43Q/exec";
+
+      const data = {
+        nama: nama,
+        kelas: kelas,
+        skor: skor
+      };
+
+      fetch(url, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      .then(response => response.json())
+      .then(json => {
+        const status = document.getElementById("status");
+        if (json.status === "sukses") {
+          status.innerText = "Data berhasil dikirim!";
+          status.className = "success";
+        } else {
+          status.innerText = "Gagal mengirim data: " + json.error;
+          status.className = "error";
+        }
+      })
+      .catch(error => {
+        document.getElementById("status").innerText = "Terjadi kesalahan: " + error;
+        document.getElementById("status").className = "error";
+      });
     }
   </script>
+
 </body>
 </html>
